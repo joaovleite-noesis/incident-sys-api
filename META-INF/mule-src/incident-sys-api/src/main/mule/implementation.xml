@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="11b2c2b9-106f-4c29-9186-d534a95e6ec4" >
+		<db:generic-connection url="jdbc:postgresql://database-1.c9r1lsfx7e56.eu-central-1.rds.amazonaws.com:5432/incidents" driverClassName="org.postgresql.Driver" user="postgres" password="Yc&amp;8q1VNUFs1" />
+	</db:config>
+	<flow name="createIncident_flow" doc:id="4370bdc3-8dc5-455c-a575-b663b7a9bea4" >
+		<db:insert doc:name="Insert" doc:id="1b4082ad-2b47-4075-997c-19b4b762c1c7" config-ref="Database_Config">
+			<db:sql><![CDATA[INSERT INTO public.incidentes(
+	titulo, descricao, data_abertura, data_conc_esp, equipa_respons, status, "categoria_ID", "prioridade_ID", validacao_client)
+	VALUES (
+			:titulo,
+			:descricao,
+			:data_abertura,
+			:data_conc_esp,
+			:equipa_respons,
+			:status,
+			:categoria_ID,
+			:prioridade_ID,
+			:validacao_client);]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	titulo: payload.titulo,
+	descricao: payload.descricao,
+	data_abertura: payload.data_abertura as LocalDateTime,
+	data_conc_esp: payload.data_conc_esp as LocalDateTime,
+	equipa_respons: payload.equipa_respons,
+	status: payload.status,
+	categoria_ID: payload.categoria_ID,
+	prioridade_ID: payload.prioridade_ID,
+	validacao_client: payload.validacao_client
+}]]]></db:input-parameters>
+		</db:insert>
+		<set-payload value='#["Incidente Criado!"]' doc:name="Incident Created!" doc:id="a6a39b73-334b-4c20-aa86-b422346579b4" />
+		<logger level="INFO" doc:name="Logger" doc:id="94058dc0-0181-45bc-ad7e-0ef5b3dd7a8a" message='#["Incidente Criado!"]'/>
+	</flow>
+	<flow name="listIncidents_Flow" doc:id="3a6e16db-3ce8-4c51-b923-1811944613ef" >
+		<db:select doc:name="Select" doc:id="29cda4bd-3e44-47c3-a68f-0feec1b33ddb" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT "ID", titulo, descricao, data_abertura, check_view, data_conc_esp, data_conclusao, equipa_respons, status, "categoria_ID", "prioridade_ID", validacao_client, first_email, second_email
+	FROM public.incidentes
+	ORDER BY "ID";]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="6054fe57-9e8d-40c6-9a68-83c5e708165a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	ID: payload01.ID,
+	titulo: payload01.titulo,
+	descricao: payload01.descricao,
+	data_abertura: payload01.data_abertura,
+	check_view: payload01.check_view,
+	data_conc_esp: payload01.data_conc_esp,
+	data_conclusao: payload01.data_conclusao,
+	equipa_respons: payload01.equipa_respons,
+	status: payload01.status,
+	categoria_ID: payload01.categoria_ID,
+	prioridade_ID: payload01.prioridade_ID,
+	validacao_client: payload01.validacao_client,
+	first_email: payload01.first_email,
+	second_email: payload01.second_email
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="bc2afe07-e849-4007-a6a0-dec8c9bfd022" message="#[payload]"/>
+	</flow>
+	<flow name="getIncidentByID_Flow" doc:id="44af58fb-da41-477f-95e6-0281fe325258" >
+		<db:select doc:name="Select" doc:id="00704ad8-ba1a-4e1a-bd22-e3a0b8effe18" config-ref="Database_Config">
+			<db:sql><![CDATA[SELECT "ID", titulo, descricao, data_abertura, check_view, data_conc_esp, data_conclusao, equipa_respons, status, "categoria_ID", "prioridade_ID", validacao_client, first_email, second_email
+	FROM public.incidentes
+	WHERE "ID" = :ID;]]></db:sql>
+			<db:input-parameters ><![CDATA[#['ID': attributes.uriParams.ID]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="6e6d09e7-5d83-49f0-9e97-3cebf3f4b98f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	ID: payload01.ID,
+	titulo: payload01.titulo,
+	descricao: payload01.descricao,
+	data_abertura: payload01.data_abertura,
+	check_view: payload01.check_view,
+	data_conc_esp: payload01.data_conc_esp,
+	data_conclusao: payload01.data_conclusao,
+	equipa_respons: payload01.equipa_respons,
+	status: payload01.status,
+	categoria_ID: payload01.categoria_ID,
+	prioridade_ID: payload01.prioridade_ID,
+	validacao_client: payload01.validacao_client,
+	first_email: payload01.first_email,
+	second_email: payload01.second_email
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="296fd8bf-ed2b-4ee3-be65-89d7529d1b77" message="#[payload]" />
+	</flow>
+	<flow name="updateIncidents" doc:id="5ffd4445-ed39-457e-9c10-b5ec133d3011" >
+		<choice doc:name="Choice" doc:id="f8f53e3c-52b5-4762-b4a9-3e5124046721" >
+			<when expression='#[not isEmpty(payload.data_conclusao)]'>
+				<db:update doc:name="Update data_conclusao" doc:id="1be0bb03-2eb3-493b-baa4-4caac79633d8" config-ref="Database_Config" >
+					<db:sql ><![CDATA[UPDATE public.incidentes
+	SET data_conclusao= :data_conclusao
+	WHERE "ID" = :ID;]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	'ID': attributes.uriParams.ID,
+	'data_conclusao': payload.data_conclusao
+}]]]></db:input-parameters>
+				</db:update>
+				<set-payload value='#["data_conclusao Updated!"]' doc:name="data_conclusao Updated!" doc:id="4af46378-a0de-42dc-a4c1-4eb291438003" />
+				<logger level="INFO" doc:name="Data_Conclusao Updated!" doc:id="9ac7e0ca-2932-4d9f-831e-9623322e1fc1" message='#["Data_Conclusao Updated!"]'/>
+			</when>
+			<when expression='#[not isEmpty(payload.check_view)]'>
+				<db:update doc:name="Update check_view" doc:id="93ce27e7-84d4-4a9e-81ee-e00b2f106777" config-ref="Database_Config">
+					<db:sql><![CDATA[UPDATE public.incidentes
+	SET check_view = :check_view
+	WHERE "ID" = :ID;]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{	
+	'ID': attributes.uriParams.ID,
+	'check_view': payload.check_view
+}]]]></db:input-parameters>
+				</db:update>
+				<set-payload value='#["Check_view Updated!"]' doc:name="Check_view Updated!" doc:id="1c6258a9-5ed5-46bf-a22a-8d94e3e57048" />
+				<logger level="INFO" doc:name="Check_View Updated!" doc:id="1d33a33f-aca1-4290-80a5-3ed6c9c47826" message='#["Check_View Updated!"]'/>
+			</when>
+			<when expression='#[not isEmpty(payload.status)]'>
+				<db:update doc:name="Update status" doc:id="94a24f00-d7f9-450b-9e99-0886bcb68959" config-ref="Database_Config">
+			<db:sql><![CDATA[UPDATE public.incidentes
+	SET status= :status
+	WHERE "ID" = :ID;]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	'ID': attributes.uriParams.ID,
+	'status': payload.status
+}]]]></db:input-parameters>
+		</db:update>
+				<set-payload value='#["Status Updated!"]' doc:name="Status Updated!" doc:id="87632e1e-7a9e-4654-9a30-324afa3d5061" />
+				<logger level="INFO" doc:name="Status Updated" doc:id="ef79ef61-a0d0-4e12-b2cc-e52b5b7317e6" message='#["Status Updated"]'/>
+			</when>
+			<when expression='#[not isEmpty(payload.validacao_client)]'>
+				<db:update doc:name="Update validacao_client" doc:id="ff812e62-0287-462b-a54e-1e55eeb78afa" config-ref="Database_Config">
+					<db:sql><![CDATA[UPDATE public.incidentes
+	SET validacao_client = :validacao_client
+	WHERE "ID" = :ID;]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	'ID': attributes.uriParams.ID,
+	'validacao_client':payload.validacao_client
+}]]]></db:input-parameters>
+				</db:update>
+				<set-payload value='#["Validacao_Client Updated!"]' doc:name="Validacao_Client Updated!" doc:id="bd0b2dbd-69ef-420e-869d-59b8b66b0004" />
+				<logger level="INFO" doc:name="validacao_client Updated" doc:id="3d1627a6-0359-4e5c-b8ba-92cf5007bb0a" message='#["validacao_client Updated"]'/>
+			</when>
+			<otherwise >
+				<set-payload value='#["NO UPDATE"]' doc:name='"NO UPDATE"' doc:id="2c228b3f-1e73-4fdb-9e06-ae671c77c43e" />
+				<logger level="INFO" doc:name="No Route Matched" doc:id="3c782fad-cbcd-4e02-885a-f1518d722591" message="No Route Matched"/>
+			</otherwise>
+		</choice>
+	</flow>
+	<flow name="deleteIncidents_Flow" doc:id="d6c9322c-e984-4125-92b3-c01c3b2bb59b" >
+		<db:delete doc:name="Delete" doc:id="f837464c-cbb4-4d2c-a641-3987ce776022" config-ref="Database_Config">
+			<db:sql ><![CDATA[DELETE FROM public.incidentes
+	WHERE "ID" = :ID;]]></db:sql>
+			<db:input-parameters ><![CDATA[#['ID': attributes.uriParams.ID]]]></db:input-parameters>
+		</db:delete>
+		<set-payload value='#["Incident Deleted!"]' doc:name='"Incident Deleted!"' doc:id="937ff3b1-354c-451f-b716-46a4038647d4" />
+		<logger level="INFO" doc:name="Incident Deleted!" doc:id="dfb38c78-266e-41cc-81e1-61a352299508" message='#["Incident Deleted!"]'/>
+	</flow>
+</mule>

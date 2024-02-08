@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_3a6e16db_3ce8_4c51_b923_1811944613ef_Output_Payload = Array<{|  ID: Number,   titulo: String,   descricao: String,   data_abertura: Date,   check_view?: Date,   data_conc_esp: Date,   data_conclusao?: Date,   equipa_respons: Number,   status: Boolean,   categoria_ID: Number,   prioridade_ID: Number,   validacao_client?: Boolean,   first_email?: Date,   second_email?: Date|}>
+

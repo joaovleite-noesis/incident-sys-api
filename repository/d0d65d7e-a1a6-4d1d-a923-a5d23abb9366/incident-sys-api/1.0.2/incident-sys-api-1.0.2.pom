@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>d0d65d7e-a1a6-4d1d-a923-a5d23abb9366</groupId>
+  <artifactId>incident-sys-api</artifactId>
+  <version>1.0.2</version>
+  <name>incident-sys-api</name>
+  <properties>
+    <classifier>raml</classifier>
+    <main>incident-sys-api.raml</main>
+    <status>published</status>
+    <originalFormatVersion>1.0</originalFormatVersion>
+    <apiVersion>v1</apiVersion>
+    <projectId>8294bae0-07e1-4a32-9655-9a801e2472b9</projectId>
+    <branchId>master</branchId>
+    <commitId>890dee8a3883962260fefe14371e39cafbd7ea82</commitId>
+    <keywords/>
+    <type>rest-api</type>
+    <mainFile>incident-sys-api.raml</mainFile>
+  </properties>
+  <repositories>
+    <repository>
+      <id>anypoint-exchange</id>
+      <url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
+    </repository>
+  </repositories>
+</project>

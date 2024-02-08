@@ -1,0 +1,16 @@
+{
+  "ID": 1,
+  "titulo": "Suporte com aplicação",
+  "descricao": "Ajuda com tal coisa",
+  "data_abertura": "2024-01-22 12:00:00",
+  "data_conc_esp": "2024-01-22 12:00:00",
+  "data_conclusao": "2024-01-22 12:00:00",
+  "equipa_respons": 2,
+  "check_view": "2024-01-22 12:00:00",
+  "status": false,
+  "categoria_ID": 2,
+  "prioridade_ID": 3,
+  "validacao_client": false,
+  "first_email": "2024-01-22 12:00:00",
+  "second_email": "2024-01-22 12:00:00"
+}

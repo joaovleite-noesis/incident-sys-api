@@ -1,0 +1,16 @@
+{ 
+            "ID": 1,
+            "titulo": "Suporte Tech",
+            "descricao":"Minha máquina nao esta a funcionar bem",
+            "data_abertura":"2024-01-23 11:00:00",
+            "data_conc_esp":"2024-01-23 12:00:00",
+            "data_conclusao": null,
+            "equipa_respons": 2,
+            "check_view":"2024-01-23 12:00:00",
+            "status": false,
+            "categoria_ID": 2,
+            "prioridade_ID": 1,
+            "validacao_client": false,
+            "first_email": null,
+            "second_email": null 
+}
